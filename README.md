@@ -1,4 +1,4 @@
-`# Sistema de Recomendação de Livros
+# Sistema de Recomendação de Livros
 
 Projeto 1 — Oficina de Desenvolvimento de Sistemas I  
 Professor: Fábio
