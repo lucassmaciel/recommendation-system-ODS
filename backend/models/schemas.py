@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import List
+
 
 class RecoRequest(BaseModel):
     user_id: str = Field(..., description="Username alvo")
@@ -14,8 +14,8 @@ class RecoItem(BaseModel):
 
 class RecoResponse(BaseModel):
     user_id: str
-    recommendations: List[RecoItem]
+    recommendations: list[RecoItem]
 
 class SimilarItemsResponse(BaseModel):
     book: str
-    similar: List[RecoItem]
+    similar: list[RecoItem]

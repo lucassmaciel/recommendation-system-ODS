@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from backend.core.config import settings
+
 from backend.api.v1.reco import router as reco_router
 
 app = FastAPI(title="Book Recommender API", version="0.1.0")

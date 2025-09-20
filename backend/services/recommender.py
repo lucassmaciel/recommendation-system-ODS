@@ -1,19 +1,19 @@
-from math import sqrt
-from typing import Dict, List, Tuple
 from collections import defaultdict
+from math import sqrt
+
 import pandas as pd
 
-from backend.models.schemas import RecoRequest, RecoResponse, RecoItem
+from backend.models.schemas import RecoItem, RecoRequest, RecoResponse
 from backend.services.data import load_ratings_df
 
 # ---------- utils ----------
 
 def _build_dicts(df: pd.DataFrame) -> tuple[
-    Dict[str, Dict[str, float]],
-    Dict[str, Dict[str, float]],
+    dict[str, dict[str, float]],
+    dict[str, dict[str, float]],
 ]:
-    user_ratings: Dict[str, Dict[str, float]] = defaultdict(dict)
-    item_ratings: Dict[str, Dict[str, float]] = defaultdict(dict)
+    user_ratings: dict[str, dict[str, float]] = defaultdict(dict)
+    item_ratings: dict[str, dict[str, float]] = defaultdict(dict)
 
     for row in df.itertuples(index=False):
         u = row.user
@@ -24,9 +24,9 @@ def _build_dicts(df: pd.DataFrame) -> tuple[
     return dict(user_ratings), dict(item_ratings)
 
 def _cosine_items(
-        b1: str, b2: str, item_ratings: Dict[str, Dict[str, float]], min_overlap: int
+        b1: str, b2: str, item_ratings: dict[str, dict[str, float]], min_overlap: int
 ) -> tuple[float, int]:
-    """similaridade do cosseno entre itens (apenas usuários em comum)."""
+    """Similaridade do cosseno entre itens (apenas usuários em comum)."""
     u1 = item_ratings.get(b1, {})
     u2 = item_ratings.get(b2, {})
     if not u1 or not u2:
@@ -62,11 +62,11 @@ def recommend_item_based(req: RecoRequest) -> RecoResponse:
     all_books = set(item_ratings.keys())
     candidates = sorted(all_books - set(rated_by_u.keys()))
 
-    recs: List[RecoItem] = []
+    recs: list[RecoItem] = []
     min_overlap = 3  # pode expor via config se quiser
 
     for cand in candidates:
-        sims: List[Tuple[float, str, int]] = []  # (sim, book_j, overlap)
+        sims: list[tuple[float, str, int]] = []  # (sim, book_j, overlap)
         for b_j, r_uj in rated_by_u.items():
             sim, overlap = _cosine_items(cand, b_j, item_ratings, min_overlap=min_overlap)
             if sim > 0:
@@ -99,7 +99,7 @@ def recommend_item_based(req: RecoRequest) -> RecoResponse:
     recs.sort(key=lambda it: (it.score or 0.0), reverse=True)
     return RecoResponse(user_id=u, recommendations=recs[: req.top_n])
 
-def similar_items_item_based(book_id: str, top_n: int = 5) -> List[RecoItem]:
+def similar_items_item_based(book_id: str, top_n: int = 5) -> list[RecoItem]:
     """Retorna itens similares a um livro usando cosine item-item."""
     df = load_ratings_df()
     _, item_ratings = _build_dicts(df)
@@ -108,8 +108,8 @@ def similar_items_item_based(book_id: str, top_n: int = 5) -> List[RecoItem]:
         return []
 
     min_overlap = 3
-    sims: List[Tuple[float, str, int]] = []
-    for other in item_ratings.keys():
+    sims: list[tuple[float, str, int]] = []
+    for other in item_ratings:
         if other == book_id:
             continue
         sim, ov = _cosine_items(book_id, other, item_ratings, min_overlap)

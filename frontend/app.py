@@ -1,7 +1,8 @@
-import streamlit as st
-import pandas as pd
-from math import sqrt
 from collections import Counter
+from math import sqrt
+
+import pandas as pd
+import streamlit as st
 
 st.set_page_config(page_title="kNN (Votação Majoritária) • Recomendação", layout="wide")
 

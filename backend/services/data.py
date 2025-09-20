@@ -1,5 +1,7 @@
 from pathlib import Path
+
 import pandas as pd
+
 from backend.core.config import settings
 
 REQUIRED = {"User-ID", "Book-Title", "Rating"}
@@ -10,7 +12,8 @@ def get_dataset_path() -> Path:  ## enquanto Dataset local
 def load_ratings_df() -> pd.DataFrame:
     path = get_dataset_path()
     if not path.exists():
-        raise FileNotFoundError(f"CSV não encontrado em {path}")
+        msg = f"CSV não encontrado em {path}"
+        raise FileNotFoundError(msg)
 
     df = pd.read_csv(path)
 
@@ -30,8 +33,9 @@ def load_ratings_df() -> pd.DataFrame:
     expected = {"user", "book", "rating"}
     missing = expected - set(df.columns)
     if missing:
+        msg = f"Esperava colunas {sorted(expected)}, encontrei {list(df.columns)}"
         raise ValueError(
-            f"Esperava colunas {sorted(expected)}, encontrei {list(df.columns)}"
+            msg
         )
 
     df = df.dropna(subset=["user", "book", "rating"]).copy()
