@@ -3,9 +3,9 @@ from typing import List
 
 class RecoRequest(BaseModel):
     user_id: str = Field(..., description="Username alvo")
-    k_neighbors: int = Field(3, ge=1, le=50)
+    k_neighbors: int = Field(20, ge=1, le=100)
     top_n: int = Field(5, ge=1, le=50)
-    like_threshold: float = Field(3.5, ge=0, le=5)
+    like_threshold: float = Field(7.0, ge=0, le=10)
 
 class RecoItem(BaseModel):
     book: str
