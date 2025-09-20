@@ -9,3 +9,5 @@ processed-data/
 # Virtual environments
 .venv
 .idea
+final_df.csv
+long_df.csv
