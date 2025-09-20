@@ -10,4 +10,7 @@ dependencies = [
     "numpy>=2.3.3",
     "pandas>=2.3.2",
     "streamlit>=1.49.1",
+    "fastapi",
+    "pydantic>=2",
+    "uvicorn[standard]",
 ]
