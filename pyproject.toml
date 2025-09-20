@@ -13,4 +13,7 @@ dependencies = [
     "fastapi",
     "pydantic>=2",
     "uvicorn[standard]",
+    "jupyter",
+    "jupyterlab",
+    "seaborn>=0.13.2",
 ]
