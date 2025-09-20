@@ -3,7 +3,7 @@ from pathlib import Path
 
 def get_dataset_path() -> Path:
     """
-    Retorna o caminho do CSV Ratings cru.
+    Retorna o caminho do CSV Ratings processado.
     Futuro: validar colunas, cachear leitura, trocar fonte, etc.
     """
     return settings.DATA_PATH

@@ -8,7 +8,7 @@ router = APIRouter(tags=["recommender"])
 @router.get("/dataset-path")
 def dataset_path():
     """
-    Rota utilitária para debug: mostra onde esperamos o CSV cru.
+    Rota utilitária para debug: mostra onde esperamos o CSV refinado.
     """
     return {"path": str(get_dataset_path())}
 
