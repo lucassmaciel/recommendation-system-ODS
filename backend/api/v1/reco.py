@@ -3,7 +3,6 @@ from backend.models.schemas import RecoRequest, RecoResponse
 from backend.services.data import get_dataset_path, load_user_item_matrix
 from backend.services.recommender_user import recommend_user_based
 import pandas as pd
-import numpy as np
 
 router = APIRouter(tags=["recommender"])
 
