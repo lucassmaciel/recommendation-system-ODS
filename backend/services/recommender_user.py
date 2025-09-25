@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from models.schemas import RecoItem, RecoResponse
+from ..models.schemas import RecoItem, RecoResponse
 
 def cosine_similarity(vec1, vec2):
     mask = (vec1 > 0) & (vec2 > 0)
