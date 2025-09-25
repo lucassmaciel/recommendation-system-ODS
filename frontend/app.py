@@ -17,6 +17,9 @@ st.html("""
 </style>
 """)
 
+ROOT = Path(__file__).resolve().parents[1]
+DATA_DIR = ROOT / "processed-data"
+
 st.set_page_config(
     page_title="Sistema de Recomendação",
 
@@ -25,9 +28,9 @@ st.set_page_config(
 
 @st.cache_data
 def load_data() -> tuple[DataFrame, DataFrame]:
-    user_path = Path("processed-data/final_user_df.csv")
+    user_path = DATA_DIR / "final_user_df.csv"
+    books_path = DATA_DIR / "books_info.csv"
     user_df: DataFrame = pd.read_csv(user_path)
-    books_path = Path("processed-data/books_info.csv")
     books_df: DataFrame = pd.read_csv(books_path)
     return user_df, books_df
 
@@ -43,7 +46,7 @@ def show_catalog():
     # Filtra livros pelo nome ou autor
     filtered_books = books_df[
         books_df["book"].str.contains(search, case=False, na=False) |
-        books_df["Book-Author"].str.contains(search, case=False, na=False)
+        books_df["author"].str.contains(search, case=False, na=False)
     ] if search else books_df
 
     cols = st.columns(3)
@@ -52,13 +55,13 @@ def show_catalog():
             img_col, text_col = st.columns([1, 1])
 
             with img_col:
-                image = row["Image-URL-L"]
+                image = row["image"]
                 st.image(image, use_container_width=True)
 
             with text_col:
                 st.markdown(f"**{row['book']}**")
-                st.caption(f"Autor: {row['Book-Author']}")
-                st.caption(f"Ano: {int(row['Year-Of-Publication'])}")
+                st.caption(f"Autor: {row['author']}")
+                st.caption(f"Ano: {int(row['year'])}")
 
 def recommend_app():
     st.write("""

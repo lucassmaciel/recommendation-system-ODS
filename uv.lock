@@ -1835,6 +1835,7 @@ dependencies = [
     { name = "pandas" },
     { name = "pydantic" },
     { name = "seaborn" },
+    { name = "st-star-rating" },
     { name = "streamlit" },
     { name = "uvicorn", extra = ["standard"] },
 ]
@@ -1850,6 +1851,7 @@ requires-dist = [
     { name = "pandas", specifier = ">=2.3.2" },
     { name = "pydantic", specifier = ">=2" },
     { name = "seaborn", specifier = ">=0.13.2" },
+    { name = "st-star-rating", specifier = ">=0.0.6" },
     { name = "streamlit", specifier = ">=1.49.1" },
     { name = "uvicorn", extras = ["standard"] },
 ]
@@ -2063,6 +2065,17 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/6d/e6/21ccce3262dd4889aa3332e5a119a3491a95e8f60939870a3a035aabac0d/soupsieve-2.8.tar.gz", hash = "sha256:e2dd4a40a628cb5f28f6d4b0db8800b8f581b65bb380b97de22ba5ca8d72572f", size = 103472, upload-time = "2025-08-27T15:39:51.78Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/14/a0/bb38d3b76b8cae341dad93a2dd83ab7462e6dbcdd84d43f54ee60a8dc167/soupsieve-2.8-py3-none-any.whl", hash = "sha256:0cc76456a30e20f5d7f2e14a98a4ae2ee4e5abdc7c5ea0aafe795f344bc7984c", size = 36679, upload-time = "2025-08-27T15:39:50.179Z" },
+]
+
+[[package]]
+name = "st-star-rating"
+version = "0.0.6"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "streamlit" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4d/08/0202a7f9383f32ddc55f1b1acd62a30998cd5fb7349bc44d2c8cb53b7038/st_star_rating-0.0.6-py3-none-any.whl", hash = "sha256:238e31d531df34a8e15eebb348cbed953c9c1689889233457c8e67846b073d79", size = 1164052, upload-time = "2023-10-16T15:08:52.786Z" },
 ]
 
 [[package]]
