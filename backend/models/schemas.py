@@ -6,6 +6,7 @@ class RecoRequest(BaseModel):
     k_neighbors: int = Field(20, ge=1, le=100)
     top_n: int = Field(5, ge=1, le=50)
     like_threshold: float = Field(7.0, ge=0, le=10)
+    data_path: str = Field(..., description="Caminho para o arquivo de dados")
 
 class RecoItem(BaseModel):
     book: str

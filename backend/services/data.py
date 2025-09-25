@@ -24,9 +24,7 @@ def load_ratings_df() -> pd.DataFrame:
 
     # renomeia para nomes seguros - tava quebrando aqui
     rename_map = {
-        "Book-Title": "book",
-        "User-ID": "user",
-        "Rating": "rating",
+        "user_id": "user",
     }
     df = df.rename(columns=rename_map)
 
