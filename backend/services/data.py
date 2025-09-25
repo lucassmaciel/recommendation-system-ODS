@@ -1,7 +1,6 @@
 from pathlib import Path
-
+from functools import lru_cache
 import pandas as pd
-
 from backend.core.config import settings
 
 REQUIRED = {"User-ID", "Book-Title", "Rating"}
@@ -9,35 +8,10 @@ REQUIRED = {"User-ID", "Book-Title", "Rating"}
 def get_dataset_path() -> Path:  ## enquanto Dataset local
     return settings.DATA_PATH
 
-def load_ratings_df() -> pd.DataFrame:
-    path = get_dataset_path()
-    if not path.exists():
-        msg = f"CSV não encontrado em {path}"
-        raise FileNotFoundError(msg)
+@lru_cache(maxsize=1)
+def load_user_item_matrix() -> pd.DataFrame:
+    df = pd.read_csv(settings.DATA_PATH)
+    if "user_id" in df.columns:
+        df = df.set_index("user_id")
 
-    df = pd.read_csv(path)
-
-    # remove colunas-índice salvas no CSV (Unnamed: 0)
-    bad_idx = [c for c in df.columns if c.lower().startswith("unnamed")]
-    if bad_idx:
-        df = df.drop(columns=bad_idx)
-
-    # renomeia para nomes seguros - tava quebrando aqui
-    rename_map = {
-        "user_id": "user",
-    }
-    df = df.rename(columns=rename_map)
-
-    expected = {"user", "book", "rating"}
-    missing = expected - set(df.columns)
-    if missing:
-        msg = f"Esperava colunas {sorted(expected)}, encontrei {list(df.columns)}"
-        raise ValueError(
-            msg
-        )
-
-    df = df.dropna(subset=["user", "book", "rating"]).copy()
-    df["user"] = df["user"].astype(str)
-    df["book"] = df["book"].astype(str)
-    df["rating"] = df["rating"].astype(float)
-    return df[["user", "book", "rating"]]
+    return df.astype(float)
