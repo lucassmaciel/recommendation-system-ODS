@@ -18,4 +18,5 @@ dependencies = [
     "seaborn>=0.13.2",
     "st-star-rating>=0.0.6",
     "requests>=2.32",
+    "filelock>=3.16"
 ]

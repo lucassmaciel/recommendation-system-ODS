@@ -19,3 +19,8 @@ class RecoResponse(BaseModel):
 class SimilarItemsResponse(BaseModel):
     book: str
     similar: list[RecoItem]
+
+class RatingIn(BaseModel):
+    user_id: str = Field(..., min_length=1)
+    book: str = Field(..., min_length=1)
+    rating: int = Field(..., ge=1, le=10)
