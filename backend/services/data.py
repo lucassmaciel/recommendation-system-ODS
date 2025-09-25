@@ -15,3 +15,6 @@ def load_user_item_matrix() -> pd.DataFrame:
         df = df.set_index("user_id")
 
     return df.astype(float)
+
+def invalidate_matrix_cache():
+    load_user_item_matrix.cache_clear()
