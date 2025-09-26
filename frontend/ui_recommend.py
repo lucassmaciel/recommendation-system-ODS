@@ -71,10 +71,8 @@ def render(user_df: DataFrame, books_df: DataFrame):
                 st.warning("Sem recomendações para este usuário.")
                 return
 
-            # DataFrame vindo do backend (já único por 'book', mas garantimos)
             rec_df = pd.DataFrame(recs).drop_duplicates(subset=["book"])
 
-            # Catálogo 1-por-livro a partir do CSV de avaliações
             books_catalog = _catalog_from_ratings(books_df)
 
             # Merge sem explosão
