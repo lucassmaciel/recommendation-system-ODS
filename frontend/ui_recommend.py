@@ -1,9 +1,9 @@
 from __future__ import annotations
-import requests
+
 import pandas as pd
+import requests
 import streamlit as st
 from pandas import DataFrame
-from streamlit_star_rating import st_star_rating
 from utils import render_card_grid
 
 BACKEND = "http://localhost:8000"  # ajuste se necessário

@@ -1,8 +1,10 @@
 from __future__ import annotations
+
 import pandas as pd
 import streamlit as st
 from pandas import DataFrame
 from utils import paginate
+
 
 def render(books_df: DataFrame):
     st.subheader("Minhas avaliações")
@@ -55,10 +57,10 @@ def render(books_df: DataFrame):
             html.append(f"""
             <div class="card">
               <img src="{img}">
-              <div class="title">{title}</div>
+              <div class="spacer"></div>
+              <div class="meta">Título:{title}</div>
               <div class="meta">Nota: {rating}</div>
               <div class="meta">Autor: {author}</div>
-              <div class="spacer"></div>
               <div class="meta">Ano: {year}</div>
             </div>
             """)

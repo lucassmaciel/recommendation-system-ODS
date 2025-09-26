@@ -1,12 +1,11 @@
 from __future__ import annotations
-from pathlib import Path
-import streamlit as st
 
 import state
+import streamlit as st
 from data import load_data
-from ui_catalog import render as Catalog
-from ui_recommend import render as Recommend
-from ui_my_ratings import render as MyRatings
+from ui_catalog import render as catalog
+from ui_my_ratings import render as myratings
+from ui_recommend import render as recommend
 
 st.set_page_config(page_title="Sistema de Recomendação", layout="wide")
 
@@ -35,9 +34,12 @@ def main():
     st.caption("Esse sistema utiliza filtragem colaborativa e correlação híbrida para calcular a distância entre os itens.")
 
     tab_rec, tab_cat, tab_my = st.tabs(["✨ Recomendações", "📚 Catálogo", "⭐ Minhas avaliações"])
-    with tab_rec: Recommend(user_df, books_df)
-    with tab_cat: Catalog(books_df)
-    with tab_my:  MyRatings(books_df)
+    with tab_rec:
+        recommend(user_df, books_df)
+    with tab_cat:
+        catalog(books_df)
+    with tab_my:
+        myratings(books_df)
 
 if __name__ == "__main__":
     main()

@@ -1,11 +1,14 @@
 from __future__ import annotations
+
 import pandas as pd
 import streamlit as st
 from pandas import DataFrame
 
+
 def paginate(df: DataFrame, page_size: int = 12, key: str = "page") -> DataFrame:
     total = len(df)
-    if total == 0: return df
+    if total == 0:
+        return df
     page = st.session_state.get(key, 1)
     n_pages = max(1, (total + page_size - 1)//page_size)
     c1, c2, c3 = st.columns([1,2,1])
@@ -68,8 +71,11 @@ def render_card_grid(df: pd.DataFrame):
         img = (row.get("image") or "").replace('"', "&quot;")
         title = str(row.get("book", ""))
         author = row.get("author") if pd.notna(row.get("author")) else "—"
-        year = row.get("year"); year_txt = f"{int(year)}" if pd.notna(year) else "—"
-        score = row.get("score"); score_txt = f"{score:.4f}" if score is not None and pd.notna(score) else "—"
+        year = row.get("year")
+        year_txt = f"{int(year)}" if pd.notna(year) else "—"
+        score = row.get("score")
+        score_txt = f"{score:.4f}" if score is not None and pd.notna(score) else "—"
+
         html.append(f"""
         <div class="card">
           <img src="{img}">
