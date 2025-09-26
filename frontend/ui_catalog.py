@@ -1,9 +1,10 @@
 from __future__ import annotations
-import requests
+
 import pandas as pd
+import requests
 import streamlit as st
-from streamlit_star_rating import st_star_rating
 from pandas import DataFrame
+from streamlit_star_rating import st_star_rating
 from utils import paginate_catalog
 
 _HAS_STARS = True
@@ -62,8 +63,6 @@ def render(books_df: DataFrame):
         search = st.text_input("🔍 Buscar livro ou autor:", placeholder="Digite o nome do livro ou autor...")
     with col2:
         st.write("")  # espaçamento
-        total_books = len(books_df)
-        st.metric("Total de Livros", total_books)
 
     df = books_df.copy()
     if search:
@@ -73,7 +72,7 @@ def render(books_df: DataFrame):
 
         if len(df) == 0:
             st.warning("Nenhum livro encontrado com os critérios de busca.")
-            return
+            st.stop()
 
     # dedupe por book para não repetir capas
     df = df.sort_values(["book", "image"], ascending=[True, False]).drop_duplicates("book")
@@ -86,31 +85,24 @@ def render(books_df: DataFrame):
 
     num_books = len(page)
     if num_books > 0:
-        num_cols = min(3, num_books)
+        num_cols = 3
         cols = st.columns(num_cols)
 
         for i, row in enumerate(page.itertuples()):
             col_idx = i % num_cols
-            with cols[col_idx]:
-                with st.container(border=True):
+            with cols[col_idx].container(border=True, height=600):
                     # correção de warning que tava dando
-                    img_url = row.image if hasattr(row, 'image') and pd.notna(row.image) else ""
-                    if img_url:
-                        try:
-                            st.image(img_url)
-                        except:
-                            st.image("https://via.placeholder.com/200x300?text=No+Image")
-                    else:
-                        st.image("https://via.placeholder.com/200x300?text=No+Image")
+                    img_url = row.image if hasattr(row, "image") and pd.notna(row.image) else ""
+                    st.image(str(img_url))
+                    st.markdown("---")
 
                     st.markdown(f"**{row.book}**")
                     st.caption(f"👤 {row.author}")
 
-                    if pd.notna(getattr(row, 'year', None)):
-                        try:
-                            st.caption(f"📅 {int(row.year)}")
-                        except Exception:
-                            st.caption(f"📅 {row.year}")
+                    if pd.notna(getattr(row, "year", None)):
+                        st.caption(f"📅 {int(row.year)}")
 
-                    if st.button("⭐ Avaliar", key=f"rate_{i}", use_container_width=True, type="secondary"):
-                        _rating_dialog(row.book)
+                    action_cols = st.columns([1, 1])
+                    with action_cols[1]:
+                        if st.button("⭐ Avaliar", key=f"rate_{row.Index}", type="secondary"):
+                            _rating_dialog(row.book)
