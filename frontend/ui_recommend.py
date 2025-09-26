@@ -72,12 +72,12 @@ def render(user_df: DataFrame, books_df: DataFrame):
                 return
 
             rec_df = pd.DataFrame(recs).drop_duplicates(subset=["book"])
+            st.dataframe(rec_df)
 
             books_catalog = _catalog_from_ratings(books_df)
 
             # Merge sem explosão
             view = rec_df.merge(books_catalog, on="book", how="left").drop_duplicates(subset=["book"])
-
             render_card_grid(view)
             st.success(f"{len(view)} recomendações exibidas para usuário {user_id}.")
         except requests.RequestException as e:
