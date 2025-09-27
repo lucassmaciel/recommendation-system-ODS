@@ -96,8 +96,6 @@ def render(books_df: DataFrame) -> None:
             st.warning("Nenhum livro encontrado.")
             return
 
-        st.info(f"📖 {len(df)} livro(s) encontrado(s)")
-
     # remover duplicatas
     df = (df.sort_values(["book", "image"], ascending=[True, False])
             .drop_duplicates(subset=["book"]))
