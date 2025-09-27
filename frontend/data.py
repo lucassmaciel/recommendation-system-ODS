@@ -14,7 +14,7 @@ def _require(p: Path):
 
 @st.cache_data
 def load_data() -> tuple[DataFrame, DataFrame]:
-    user_path = DATA_DIR / "final_user_df.csv"
+    user_path = DATA_DIR / "df_filtrado.csv"
     books_path = DATA_DIR / "books_info.csv"
     _require(user_path)
     _require(books_path)

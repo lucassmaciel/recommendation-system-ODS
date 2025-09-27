@@ -25,6 +25,18 @@ def sidebar(user_ids):
     with st.sidebar:
         st.header("Conta")
 
+        flash = st.session_state.pop("flash", None)
+        if flash:
+            kind, msg = flash.get("type"), flash.get("msg", "")
+            if kind == "success":
+                st.success(msg)
+            elif kind == "warning":
+                st.warning(msg)
+            elif kind == "error":
+                st.error(msg)
+            else:
+                st.info(msg)
+
         current = st.session_state.get("current_user")
         st.caption(f"Logado como: **{current or '—'}**")
 
@@ -41,20 +53,26 @@ def sidebar(user_ids):
 
         new_id = st.text_input("Cadastrar novo ID", value="", placeholder="ex.: 9999")
         if st.button("Cadastrar", use_container_width=True):
+            new_uid = new_id.strip()
             if not new_id.strip():
                 st.warning("Informe um ID.")
             else:
                 try:
                     r = requests.post(f"{BACKEND}/v1/users/signup",
-                                      json={"user_id": new_id.strip()},
+                                      json={"user_id": new_uid},
                                       timeout=20)
                     r.raise_for_status()
-                    try:
-                        load_data.clear()
-                    except Exception:
-                        st.cache_data.clear()
-                    st.success(f"Usuário {new_id.strip()} cadastrado.")
-                    st.rerun()
+                    payload = r.json() if r.headers.get("content-type", "").startswith("application/json") else {}
+                    if not payload.get("created", True):
+                        st.warning(f"O ID **{new_uid}** já existe. Escolha outro.")
+                    else:
+                        try:
+                            load_data.clear()
+                        except Exception:
+                            st.cache_data.clear()
+                        st.session_state["flash"] = {"type": "success", "msg": f"Usuário **{new_uid}** cadastrado com sucesso."}
+                        st.session_state["current_user"] = new_uid
+                        st.rerun()
                 except requests.RequestException as e:
                     st.error(f"Falha ao cadastrar: {e}")
 
