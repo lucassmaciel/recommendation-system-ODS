@@ -24,14 +24,14 @@ def render_recommendation_card(row: pd.Series) -> None:
         if pd.notna(row.get("author")):
             st.markdown(f"*{row['author']}*")
 
-        # score e ano em duas colunas
+        # score e book_id em duas colunas
         col1, col2 = st.columns(2)
         with col1:
-            if pd.notna(row.get("score")):
-                st.metric("Score", f"{row['score']:.2f}")
-        with col2:
             if pd.notna(row.get("year")):
                 st.caption(f"Ano: {int(row['year'])}")
+        with col2:
+            if pd.notna(row.get("book_id")):
+                st.caption(f"ID: {int(row["book_id"])}")
 
 
 def get_recommendations(user_id: str, top_n: int, metric: str) -> DataFrame | None:

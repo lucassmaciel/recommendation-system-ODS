@@ -52,21 +52,24 @@ def show_rating_dialog(book_title: str):
 def render_book_card(row: pd.Series) -> None:
     """Renderiza um card de livro do catálogo."""
     with st.container():
-        # Imagem do livro
+        # imagem do livro
         st.image(row["image"], width="stretch")
 
-        # Título e autor
+        # título e autor
         st.markdown(f"**{row.get('book', 'Sem título')}**")
         if pd.notna(row.get("author")):
             st.markdown(f"*{row.author}*")
 
-        # Ano e botão de avaliar em duas colunas
-        col1, col2 = st.columns(2)
+        # ano, book_id e botão de avaliar em três colunas
+        col1, col2 , col3= st.columns([1, 1, 1])
         with col1:
             if pd.notna(row.get("year")):
                 st.caption(f"📅 {int(row.year)}")
         with col2:
-            if st.button("⭐ Avaliar", key=f"rate_{row.name}", type="secondary"):
+            if pd.notna(row.get("book_id")):
+                st.caption(f"ID: {int(row.book_id)}")
+        with col3:
+            if st.button("⭐ Avaliar", key=f"rate_{row.name}", type="secondary", width="stretch"):
                 show_rating_dialog(row.book)
 
 # -------- página do catálogo --------

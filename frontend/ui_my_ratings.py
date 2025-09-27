@@ -19,7 +19,7 @@ def render_book_card(row: pd.Series) -> None:
         if pd.notna(row.get("author")):
             st.markdown(f"*{row['author']}*")
 
-        # rating e ano em duas colunas e com tamanhos diferentes
+        # rating e ano e book_id em duas colunas e com tamanhos diferentes
         col1, col2 = st.columns(2)
         with col1:
             rating = row.get("rating")
@@ -29,6 +29,8 @@ def render_book_card(row: pd.Series) -> None:
             year = row.get("year")
             if pd.notna(year):
                 st.caption(f"Ano: {int(year)}")
+            if pd.notna(row.get("book_id")):
+                st.caption(f"ID: {int(row["book_id"])}")
 
 def render(books_df: DataFrame) -> None:
     """Renderiza a página de avaliações geral."""
