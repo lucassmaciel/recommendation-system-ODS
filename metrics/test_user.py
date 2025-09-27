@@ -25,7 +25,7 @@ def evaluate_recommender_stable_general(df, recommender_func, sim_metric="cosine
             continue
 
         n_test = max(1, int(len(rated_books) * test_fraction))
-        test_books = rated_books[-n_test:]  # últimos n_test itens
+        test_books = rated_books[-n_test:] 
         train_books = [b for b in rated_books if b not in test_books]
 
         df_train = df.copy()
@@ -44,6 +44,8 @@ def evaluate_recommender_stable_general(df, recommender_func, sim_metric="cosine
         relevant = set(test_books)
         hits = len(set(recommended_books) & relevant)
 
+        print(f"[{sim_metric.upper()}] Usuário {user_id}: {hits} acertos em {k} recomendações -> Acurácia = {hits/k:.2%}")
+
         accuracies.append(hits / k)
         recalls.append(hits / len(relevant))
         ndcgs.append(ndcg_at_k(recommended_books, relevant, k))
@@ -54,7 +56,7 @@ def evaluate_recommender_stable_general(df, recommender_func, sim_metric="cosine
 def main():
     df = pd.read_csv(settings.DATA_PATH, index_col=0)
 
-    user_id = "23872"  # usuário fixo para teste
+    user_id = "23872" 
     print(f"Usuário selecionado para teste: {user_id}")
 
     req = RecoRequest(
@@ -64,7 +66,6 @@ def main():
         like_threshold=7
     )
 
-    # Testar recomendação normal
     for metric in ["cosine", "pearson"]:
         res = recommender_user.recommend_user_based_weighted_100(req, df=df, sim_metric=metric)
         print(f"\n=== {metric.capitalize()} ===")
@@ -75,12 +76,13 @@ def main():
     for metric in ["cosine", "pearson"]:
         p, r, n = evaluate_recommender_stable_general(
             df,
-            recommender_user.recommend_user_based_weighted_100,  # NOVO ALGORITMO
+            recommender_user.recommend_user_based_weighted_100,
             sim_metric=metric,
             k=20
         )
         print(f"{metric.capitalize()} -> Accuracy@20: {p:.4f}, Recall@20: {r:.4f}, NDCG@20: {n:.4f}")
 
+    print("\n=== Avaliação de Acurácia com otimização (usuários com >=20 avaliações, holdout 20%) ===")
     for metric in ["cosine", "pearson"]:
         p, r, n = evaluate_recommender_stable_general(
             df,
