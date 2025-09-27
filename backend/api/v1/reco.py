@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Query
 from backend.models.schemas import RecoRequest, RecoResponse
 from backend.services.data import get_dataset_path, load_user_item_matrix
-from backend.services.recommender_user import recommend_user_based
+from backend.services.recommender_user import recommend_user_based_better
 import pandas as pd
 
 router = APIRouter(tags=["recommender"])
@@ -62,6 +62,14 @@ def recomendar(
     """
     try:
         df = load_user_item_matrix()
-        return recommend_user_based(req, df=df, sim_metric=sim_metric)
+        print("[reco] user_id:", req.user_id, "top_n:", req.top_n, "like_threshold:", req.like_threshold, "sim_metric:", sim_metric)
+        print("[reco] df shape:", df.shape, "index dtype:", df.index.dtype)
+        print("[reco] target row head:", df.loc[int(req.user_id) if int in type(df.index.values).__mro__ else str(req.user_id)].replace(0, pd.NA).dropna().head(10).to_dict())
+
+        return recommend_user_based_better(
+            req,
+            sim_metric=sim_metric,
+            df=df,
+        )
     except (FileNotFoundError, ValueError) as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
