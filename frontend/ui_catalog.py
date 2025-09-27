@@ -66,10 +66,16 @@ def render_book_card(row: pd.Series) -> None:
             if pd.notna(row.get("year")):
                 st.caption(f"📅 {int(row.year)}")
         with col2:
-            if pd.notna(row.get("book_id")):
-                st.caption(f"ID: {int(row.book_id)}")
+            bid = row.get("books_id", row.get("book_id"))
+            if pd.notna(bid):
+                try:
+                    bid_str = str(int(bid))
+                except Exception:
+                    bid_str = str(bid)
+                st.caption(f"ID: {bid_str}")
         with col3:
-            if st.button("⭐ Avaliar", key=f"rate_{row.name}", type="secondary", width="stretch"):
+            key_suffix = row.get("books_id", row.name)
+            if st.button("⭐ Avaliar", key=f"rate_{key_suffix}", type="secondary", width="stretch"):
                 show_rating_dialog(row.book)
 
 # -------- página do catálogo --------
