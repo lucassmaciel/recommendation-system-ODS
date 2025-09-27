@@ -23,7 +23,11 @@ def _catalog_from_ratings(books_df: pd.DataFrame) -> pd.DataFrame:
     keep_cols = [c for c in ["book", "author", "year", "image"] if c in df.columns]
 
     has_img = df.get("image")
-    df["_has_img"] = has_img.notna() & (has_img.astype(str).str.len() > 0) if has_img is not None else False
+    df["_has_img"] = (
+        has_img.notna() & (has_img.astype(str).str.len() > 0)
+        if has_img is not None
+        else False
+    )
 
     year_col = "year" if "year" in df.columns else None
     sort_by = ["_has_img"]
@@ -38,7 +42,10 @@ def _catalog_from_ratings(books_df: pd.DataFrame) -> pd.DataFrame:
     df = df.drop_duplicates(subset=["book"], keep="first")
 
     df = df[keep_cols].copy()
-    df.drop(columns=[c for c in ["_has_img"] if c in df.columns], inplace=True, errors="ignore")
+    df: DataFrame = df.drop(
+        columns=[c for c in ["_has_img"] if c in df.columns],
+        errors="ignore",
+    )
     return df
 
 
@@ -52,14 +59,14 @@ def render(user_df: DataFrame, books_df: DataFrame):
 
     c1, c2, _ = st.columns([1, 1, 2])
     with c1:
-        top_n = st.slider("Top-N", min_value=1, max_value=20, value=8)
+        top_n: int = st.slider("Top-N", min_value=1, max_value=20, value=8)
     with c2:
-        metric = st.selectbox("Métrica", ["hybrid", "cosine", "pearson"], index=0)
+        metric: str = st.selectbox("Métrica", ["hybrid", "cosine", "pearson"], index=0)
 
     if st.button("Ver recomendações"):
         payload = {"user_id": str(user_id), "top_n": int(top_n), "like_threshold": 7}
         try:
-            r = requests.post(
+            r: requests.Response = requests.post(
                 f"{BACKEND}/v1/recomendar",
                 params={"sim_metric": metric},
                 json=payload,
@@ -71,13 +78,17 @@ def render(user_df: DataFrame, books_df: DataFrame):
                 st.warning("Sem recomendações para este usuário.")
                 return
 
-            rec_df = pd.DataFrame(recs).drop_duplicates(subset=["book"])
-            st.dataframe(rec_df)
+            rec_df: DataFrame = pd.DataFrame(recs).drop_duplicates(subset=["book"])
 
-            books_catalog = _catalog_from_ratings(books_df)
+            with st.expander("Ver dados brutos"):
+                st.dataframe(rec_df)
+
+            books_catalog: DataFrame = _catalog_from_ratings(books_df)
 
             # Merge sem explosão
-            view = rec_df.merge(books_catalog, on="book", how="left").drop_duplicates(subset=["book"])
+            view: DataFrame = rec_df.merge(books_catalog, on="book", how="left").drop_duplicates(
+                subset=["book"]
+            )
             render_card_grid(view)
             st.success(f"{len(view)} recomendações exibidas para usuário {user_id}.")
         except requests.RequestException as e:

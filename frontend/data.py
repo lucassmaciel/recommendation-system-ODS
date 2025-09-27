@@ -16,7 +16,8 @@ def _require(p: Path):
 def load_data() -> tuple[DataFrame, DataFrame]:
     user_path = DATA_DIR / "final_user_df.csv"
     books_path = DATA_DIR / "books_info.csv"
-    _require(user_path); _require(books_path)
+    _require(user_path)
+    _require(books_path)
     user_df = pd.read_csv(user_path)
     books_df = pd.read_csv(books_path)
     return user_df, books_df
