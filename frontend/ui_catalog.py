@@ -5,104 +5,106 @@ import requests
 import streamlit as st
 from pandas import DataFrame
 from streamlit_star_rating import st_star_rating
-from utils import paginate_catalog
+from utils import paginate
 
-_HAS_STARS = True
+_USE_STAR_RATING = True
 
-BACKEND = "http://localhost:8000"
+BACKEND_URL = "http://localhost:8000"
 
 # -------- modal de avaliação --------
 @st.dialog("Avaliar livro")
-def _rating_dialog(book: str):
-    uid = st.session_state.get("current_user")
-    if not uid:
-        st.warning("⚠️ Selecione um usuário na barra lateral para avaliar.")
-        if st.button("Fechar", type="secondary"):
+def show_rating_dialog(book_title: str):
+    """Exibe um modal para o usuário avaliar um livro."""
+    user_id = st.session_state.get("current_user")
+    if not user_id:
+        st.warning("⚠️ Selecione um usuário na barra lateral para poder avaliar.")
+        if st.button("Fechar"):
             st.rerun()
         return
 
-    st.markdown(f"**{book}**")
+    st.markdown(f"**{book_title}**")
     st.markdown("---")
 
-    if _HAS_STARS:
-        nota = st_star_rating(
-            label="Sua nota",
-            maxValue=10,
-            defaultValue=7,
-            key="rate_stars_dialog",
-            size=25
-        )
+    if _USE_STAR_RATING:
+        rating: int = st_star_rating(label="Sua nota", maxValue=10, defaultValue=7, key="rate_stars", size=25)
     else:
-        nota = st.slider("Sua nota", 1, 10, 7, key="rate_slider_dialog", help="1 = Ruim, 10 = Excelente")
+        rating: int = st.slider("Sua nota", 1, 10, 7, key="rate_slider", help="1 = Ruim, 10 = Excelente")
 
-    st.info(f"Nota selecionada: {nota}/10")
+    if rating:
+        st.info(f"Nota selecionada: {rating}/10")
 
-    c1, c2 = st.columns(2)
-    with c1:
-        if st.button("Salvar avaliação", type="primary", use_container_width=True):
+    col1, col2 = st.columns(2)
+    if col1.button("Salvar avaliação", type="primary", use_container_width=True):
+        payload = {"user_id": str(user_id), "book": str(book_title), "rating": int(rating)}
+        try:
             with st.spinner("Salvando..."):
-                try:
-                    payload = {"user_id": str(uid), "book": str(book), "rating": int(nota)}
-                    r = requests.post(f"{BACKEND}/v1/rating", json=payload, timeout=20)
-                    r.raise_for_status()
-                    st.success("Avaliação salva com sucesso!")
-                    st.cache_data.clear()
-                    st.rerun()
-                except requests.RequestException as e:
-                    st.error(f"Falha ao salvar avaliação: {e}")
-    with c2:
-        if st.button("Cancelar", use_container_width=True):
+                response = requests.post(f"{BACKEND_URL}/v1/rating", json=payload, timeout=10)
+                response.raise_for_status()
+            st.success("Avaliação salva com sucesso!")
+            st.cache_data.clear() # Limpa o cache para recarregar as recomendações
             st.rerun()
+        except requests.RequestException as e:
+            st.error(f"Falha ao salvar avaliação: {e}")
+
+    if col2.button("Cancelar", use_container_width=True):
+        st.rerun()
+
+def render_book_card(row: pd.Series) -> None:
+    """Renderiza um card de livro do catálogo."""
+    with st.container():
+        # Imagem do livro
+        st.image(row["image"], width="stretch")
+
+        # Título e autor
+        st.markdown(f"**{row.get('book', 'Sem título')}**")
+        if pd.notna(row.get("author")):
+            st.markdown(f"*{row.author}*")
+
+        # Ano e botão de avaliar em duas colunas
+        col1, col2 = st.columns(2)
+        with col1:
+            if pd.notna(row.get("year")):
+                st.caption(f"📅 {int(row.year)}")
+        with col2:
+            if st.button("⭐ Avaliar", key=f"rate_{row.name}", type="secondary"):
+                show_rating_dialog(row.book)
 
 # -------- página do catálogo --------
-def render(books_df: DataFrame):
+def render(books_df: DataFrame) -> None:
+    """Renderiza a página do catálogo."""
     st.subheader("📚 Catálogo de Livros")
 
-    col1, col2 = st.columns([3, 1])
-    with col1:
-        search = st.text_input("🔍 Buscar livro ou autor:", placeholder="Digite o nome do livro ou autor...")
-    with col2:
-        st.write("")  # espaçamento
+    # Barra de busca
+    search: str = st.text_input(
+        "🔍 Buscar livro ou autor:",
+        placeholder="Digite o nome do livro ou autor..."
+    )
 
-    df = books_df.copy()
+    # Filtrar dataframe
+    df: DataFrame = books_df.copy()
     if search:
-        mask = df["book"].astype(str).str.contains(search, case=False, na=False) | \
-               df["author"].astype(str).str.contains(search, case=False, na=False)
+        mask = (
+            df["book"].astype(str).str.contains(search, case=False, na=False) |
+            df["author"].astype(str).str.contains(search, case=False, na=False)
+        )
         df = df[mask]
 
-        if len(df) == 0:
-            st.warning("Nenhum livro encontrado com os critérios de busca.")
-            st.stop()
+        if df.empty:
+            st.warning("Nenhum livro encontrado.")
+            return
 
-    # dedupe por book para não repetir capas
-    df = df.sort_values(["book", "image"], ascending=[True, False]).drop_duplicates("book")
+        st.info(f"📖 {len(df)} livro(s) encontrado(s)")
 
-    # Mostrar quantos livros foram encontrados
-    if search:
-        st.info(f"{len(df)} livro(s) encontrado(s)")
+    # remover duplicatas
+    df = (df.sort_values(["book", "image"], ascending=[True, False])
+            .drop_duplicates(subset=["book"]))
 
-    page = paginate_catalog(df, page_size=12, key="cat_page")
+    # paginação
+    page: DataFrame = paginate(df, page_size=9, key="catalog_page")
 
-    num_books = len(page)
-    if num_books > 0:
-        num_cols = 3
-        cols = st.columns(num_cols)
+    cols = st.columns(3)
+    for idx, (_, row) in enumerate(page.iterrows()):
+        with cols[idx % 3]:
+            render_book_card(row)
 
-        for i, row in enumerate(page.itertuples()):
-            col_idx = i % num_cols
-            with cols[col_idx].container(border=True, height=600):
-                    # correção de warning que tava dando
-                    img_url = row.image if hasattr(row, "image") and pd.notna(row.image) else ""
-                    st.image(str(img_url))
-                    st.markdown("---")
-
-                    st.markdown(f"**{row.book}**")
-                    st.caption(f"👤 {row.author}")
-
-                    if pd.notna(getattr(row, "year", None)):
-                        st.caption(f"📅 {int(row.year)}")
-
-                    action_cols = st.columns([1, 1])
-                    with action_cols[1]:
-                        if st.button("⭐ Avaliar", key=f"rate_{row.Index}", type="secondary"):
-                            _rating_dialog(row.book)
+    st.divider()
