@@ -49,12 +49,16 @@ def sidebar(user_ids):
                                       json={"user_id": new_id.strip()},
                                       timeout=20)
                     r.raise_for_status()
-                    try:
-                        load_data.clear()
-                    except Exception:
-                        st.cache_data.clear()
-                    st.success(f"Usuário {new_id.strip()} cadastrado.")
-                    st.rerun()
+                    payload = r.json() if r.headers.get("content-type", "").startswith("application/json") else {}
+                    if not payload.get("created", True):
+                        st.warning(f"O ID **{uid}** já existe. Escolha outro.")
+                    else:
+                        try:
+                            load_data.clear()
+                        except Exception:
+                            st.cache_data.clear()
+                        st.success(f"Usuário {new_id.strip()} cadastrado.")
+                        st.rerun()
                 except requests.RequestException as e:
                     st.error(f"Falha ao cadastrar: {e}")
 
