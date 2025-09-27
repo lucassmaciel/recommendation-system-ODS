@@ -58,7 +58,7 @@ def render(books_df: DataFrame):
             <div class="card">
               <img src="{img}">
               <div class="spacer"></div>
-              <div class="meta">Título:{title}</div>
+              <div class="meta">Título: {title}</div>
               <div class="meta">Nota: {rating}</div>
               <div class="meta">Autor: {author}</div>
               <div class="meta">Ano: {year}</div>

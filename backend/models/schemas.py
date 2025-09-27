@@ -5,7 +5,7 @@ class RecoRequest(BaseModel):
     user_id: str = Field(..., description="Username alvo")
     k_neighbors: int = Field(20, ge=1, le=100)
     top_n: int = Field(5, ge=1, le=50)
-    like_threshold: float = Field(7.0, ge=0, le=10)
+    like_threshold: float = Field(2.0, ge=0, le=10)
 
 class RecoItem(BaseModel):
     book: str
@@ -24,3 +24,6 @@ class RatingIn(BaseModel):
     user_id: str = Field(..., min_length=1)
     book: str = Field(..., min_length=1)
     rating: int = Field(..., ge=1, le=10)
+
+class UserSignup(BaseModel):
+    user_id: str = Field(..., min_length=1, description="Identificador do usuário (string)")
