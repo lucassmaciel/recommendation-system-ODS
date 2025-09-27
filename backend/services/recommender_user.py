@@ -1,185 +1,115 @@
 import numpy as np
 import pandas as pd
-from ..models.schemas import RecoItem, RecoResponse
+from backend.models.schemas import RecoItem, RecoResponse
 
-def ndcg_score(recommended_books, relevant_books, k):
-    dcg = 0.0
-    for i, book in enumerate(recommended_books[:k]):
-        if book in relevant_books:
-            dcg += 1 / np.log2(i + 2)
-    idcg = sum(1 / np.log2(i + 2) for i in range(min(len(relevant_books), k)))
-    return dcg / idcg if idcg > 0 else 0.0
+def _cosine_on_overlap(a: np.ndarray, b: np.ndarray, mask: np.ndarray) -> float:
+    if mask.sum() == 0: return 0.0
+    av, bv = a[mask], b[mask]
+    na, nb = np.linalg.norm(av), np.linalg.norm(bv)
+    if na == 0 or nb == 0: return 0.0
+    return float(np.dot(av, bv) / (na * nb))
 
-def cosine_similarity(vec1, vec2, shrinkage_cos=10):
-    mask = (vec1 > 0) & (vec2 > 0)
-    if mask.sum() == 0:
-        return 0.0
-    v1, v2 = vec1[mask], vec2[mask]
+def _pearson_on_overlap(a: np.ndarray, b: np.ndarray, mask: np.ndarray) -> float:
+    n = int(mask.sum())
+    if n < 2: return 0.0
+    av, bv = a[mask], b[mask]
+    av, bv = av - av.mean(), bv - bv.mean()
+    sa, sb = np.linalg.norm(av), np.linalg.norm(bv)
+    if sa == 0 or sb == 0: return 0.0
+    return float(np.dot(av, bv) / (sa * sb))
 
-    # Normalização específica para Cosine
-    v1 = v1 - v1.mean()
-    v2 = v2 - v2.mean()
-
-    num = np.dot(v1, v2)
-    denom = np.linalg.norm(v1) * np.linalg.norm(v2)
-    base_sim = num / denom if denom > 0 else 0.0
-
-    # Shrinkage específico
-    return base_sim * (mask.sum() / (mask.sum() + shrinkage_cos))
-
-def pearson_similarity(vec1, vec2, shrinkage_pearson=5):
-    mask = (vec1 > 0) & (vec2 > 0)
-    if mask.sum() < 2:
-        return 0.0
-    v1, v2 = vec1[mask], vec2[mask]
-
-    # Normalização específica para Pearson
-    v1, v2 = v1 - v1.mean(), v2 - v2.mean()
-    denom = np.linalg.norm(v1) * np.linalg.norm(v2)
-    base_sim = np.dot(v1, v2) / denom if denom > 0 else 0.0
-
-    # Shrinkage específico
-    return base_sim * (mask.sum() / (mask.sum() + shrinkage_pearson))
-
-def recommend_user_based_weighted_100(req, sim_metric="cosine",
-                                       shrinkage_cos=10,
-                                       shrinkage_pearson=5,
-                                       top_n=None,
-                                       coverage_shrinkage=5,
-                                       df=None):
+def recommend_user_based(req, sim_metric="cosine", alpha=0.9, df=None, k_neighbors=20, min_overlap=2):
+    # --- carregar matriz wide ---
     if df is None:
-        df = pd.read_csv(req.data_path, index_col=0)
+        df = pd.read_csv(req.data_path, dtype={"user_id": str}).set_index("user_id")
+    df = df.apply(pd.to_numeric, errors="coerce").fillna(0.0)
 
-    df = df.fillna(0)
-    user_id = int(req.user_id)
-    if user_id not in df.index:
+    uid = str(req.user_id)
+    if uid not in df.index:
         return RecoResponse(user_id=req.user_id, recommendations=[])
 
-    target_ratings = df.loc[user_id]
-    liked_books = target_ratings[target_ratings >= req.like_threshold].index.tolist()
-    if not liked_books:
-        return RecoResponse(user_id=req.user_id, recommendations=[])
+    target = df.loc[uid].astype(float).values
+    cols = np.array(df.columns)
+    seen_mask_u = (target > 0)
+    seen_books = set(cols[seen_mask_u])
 
-    sims = {}
-    for other_id in df.index:
-        if other_id == user_id:
+    # médias por usuário
+    user_means = (df.replace(0, np.nan)).mean(axis=1).fillna(0.0)
+    mean_u = float(user_means.loc[uid])
+
+    # --- similaridades ---
+    sims = []
+    for other_id, row in df.iterrows():
+        if other_id == uid: continue
+        other = row.values.astype(float)
+        mask = (target > 0) & (other > 0)
+        if mask.sum() < min_overlap:
             continue
-        other_ratings = df.loc[other_id]
 
         if sim_metric == "cosine":
-            sim = cosine_similarity(target_ratings.values, other_ratings.values, shrinkage_cos)
+            s = _cosine_on_overlap(target, other, mask)
         elif sim_metric == "pearson":
-            sim = pearson_similarity(target_ratings.values, other_ratings.values, shrinkage_pearson)
-        else:
-            raise ValueError(f"Similarity {sim_metric} não suportada")
-
-        sims[other_id] = sim
-
-    if not sims:
-        return RecoResponse(user_id=req.user_id, recommendations=[])
-
-    # Se não passar top_n, usamos todos os usuários
-    if top_n is not None:
-        sims = dict(sorted(sims.items(), key=lambda x: x[1], reverse=True)[:top_n])
-
-    scores = {}
-    sim_sums = {}
-    for other_id, sim in sims.items():
-        coverage = (df.loc[user_id] > 0) & (df.loc[other_id] > 0)
-        coverage_score = coverage.sum() / (coverage.sum() + coverage_shrinkage)
-
-        # === FILTRAGEM COLABORATIVA PONDERADA 100% ===
-        for book, rating in df.loc[other_id].items():
-            if rating >= req.like_threshold and book not in liked_books:
-                scores[book] = scores.get(book, 0) + sim * rating * coverage_score
-                sim_sums[book] = sim_sums.get(book, 0) + sim * coverage_score
-
-    # Normalização Min-Max
-    if scores:
-        min_score, max_score = min(scores.values()), max(scores.values())
-        for book in scores:
-            scores[book] = (scores[book] - min_score) / (max_score - min_score + 1e-9)
-
-    recommendations_list = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-    recommended_books = [book for book, _ in recommendations_list]
-    ndcg = ndcg_score(recommended_books, liked_books, req.top_n)
-
-    final_recommendations = [
-        RecoItem(book=book, score=scores[book], reason=f"{sim_metric} (NDCG:{ndcg:.4f})")
-        for book, _ in recommendations_list[:req.top_n]
-    ]
-
-    return RecoResponse(user_id=req.user_id, recommendations=final_recommendations)
-
-def recommend_user_based_weighted_optimized(req, sim_metric="cosine",
-                                                 shrinkage_cos=5,
-                                                 shrinkage_pearson=2,
-                                                 coverage_shrinkage=2,
-                                                 top_n=100,
-                                                 df=None):
-    if df is None:
-        df = pd.read_csv(req.data_path, index_col=0)
-
-    df = df.fillna(0)
-    user_id = int(req.user_id)
-    if user_id not in df.index:
-        return RecoResponse(user_id=req.user_id, recommendations=[])
-
-    target_ratings = df.loc[user_id]
-    liked_books = target_ratings[target_ratings >= req.like_threshold].index.tolist()
-    if not liked_books:
-        return RecoResponse(user_id=req.user_id, recommendations=[])
-
-    sims = {}
-    for other_id in df.index:
-        if other_id == user_id:
-            continue
-        other_ratings = df.loc[other_id]
-
-        if sim_metric == "cosine":
-            sim = cosine_similarity(target_ratings.values, other_ratings.values, shrinkage_cos)
-        elif sim_metric == "pearson":
-            sim = pearson_similarity(target_ratings.values, other_ratings.values, shrinkage_pearson)
+            s = _pearson_on_overlap(target, other, mask)
         elif sim_metric == "hybrid":
-            sim_cos = cosine_similarity(target_ratings.values, other_ratings.values, shrinkage_cos)
-            sim_pear = pearson_similarity(target_ratings.values, other_ratings.values, shrinkage_pearson)
-            mask = (target_ratings.values > 0) & (other_ratings.values > 0)
-            alpha_adj = 0.9 if mask.sum() < 3 else 0.5
-            sim = alpha_adj * sim_cos + (1 - alpha_adj) * sim_pear
+            s_cos = _cosine_on_overlap(target, other, mask)
+            s_pear = _pearson_on_overlap(target, other, mask)
+            s = (0.9 if mask.sum() < 5 else alpha) * s_cos + (0.1 if mask.sum() < 5 else (1 - alpha)) * s_pear
         else:
-            raise ValueError(f"Similarity {sim_metric} não suportada")
+            raise ValueError("Similarity não suportada")
 
-        sims[other_id] = sim
+        if s != 0.0:
+            sims.append((other_id, float(s)))
 
     if not sims:
-        return RecoResponse(user_id=req.user_id, recommendations=[])
+        popularity = (df > 0).sum(axis=0).sort_values(ascending=False)
+        recs = [b for b in popularity.index if b not in seen_books][:req.top_n]
+        return RecoResponse(user_id=req.user_id,
+                            recommendations=[RecoItem(book=b, score=None, reason="popularity") for b in recs])
 
-    # Top N vizinhos mais similares
-    sims = dict(sorted(sims.items(), key=lambda x: x[1], reverse=True)[:top_n])
+    sims_sorted = sorted(sims, key=lambda kv: kv[1], reverse=True)[:k_neighbors]
+    neighbor_ids = [nid for nid, _ in sims_sorted]
+    neighbor_sims = dict(sims_sorted)
 
-    scores = {}
-    sim_sums = {}
-    for other_id, sim in sims.items():
-        coverage = (df.loc[user_id] > 0) & (df.loc[other_id] > 0)
-        coverage_score = coverage.sum() / (coverage.sum() + coverage_shrinkage)
+    # --- scoring por desvio da média do vizinho ---
+    scores, weights = {}, {}
+    for nid in neighbor_ids:
+        s = neighbor_sims[nid]
+        v = df.loc[nid].astype(float)
+        mean_v = float(user_means.loc[nid])
+        cand_mask = (v > 0) & (~seen_mask_u)
+        if not cand_mask.any():
+            continue
+        contrib = v[cand_mask] - mean_v
+        for book, delta in zip(cols[cand_mask], contrib.values):
+            scores[book] = scores.get(book, 0.0) + s * float(delta)
+            weights[book] = weights.get(book, 0.0) + abs(s)
 
-        for book, rating in df.loc[other_id].items():
-            if rating >= req.like_threshold and book not in liked_books:
-                scores[book] = scores.get(book, 0) + sim * rating * coverage_score
-                sim_sums[book] = sim_sums.get(book, 0) + sim * coverage_score
+    if not scores:
+        agg, wsum = {}, {}
+        for nid in neighbor_ids:
+            s = neighbor_sims[nid]
+            v = df.loc[nid].astype(float)
+            for book, rating in v.items():
+                if rating > 0 and book not in seen_books:
+                    agg[book] = agg.get(book, 0.0) + s * rating
+                    wsum[book] = wsum.get(book, 0.0) + abs(s)
+        if not agg:
+            popularity = (df > 0).sum(axis=0).sort_values(ascending=False)
+            recs = [b for b in popularity.index if b not in seen_books][:req.top_n]
+            return RecoResponse(user_id=req.user_id,
+                                recommendations=[RecoItem(book=b, score=None, reason="popularity") for b in recs])
+        scored = [(b, agg[b] / (wsum[b] + 1e-9)) for b in agg]
+        scored.sort(key=lambda x: x[1], reverse=True)
+        top = scored[:req.top_n]
+        return RecoResponse(user_id=req.user_id,
+                            recommendations=[RecoItem(book=b, score=s, reason=sim_metric) for b, s in top])
 
-    if scores:
-        min_score, max_score = min(scores.values()), max(scores.values())
-        for book in scores:
-            scores[book] = (scores[book] - min_score) / (max_score - min_score + 1e-9)
+    combined = []
+    for b in scores:
+        pred = mean_u + scores[b] / (weights[b] + 1e-9)
+        combined.append((b, float(pred)))
+    combined.sort(key=lambda x: x[1], reverse=True)
+    top = combined[:req.top_n]
 
-    recommendations_list = sorted(scores.items(), key=lambda x: x[1], reverse=True)
-    recommended_books = [book for book, _ in recommendations_list]
-    ndcg = ndcg_score(recommended_books, liked_books, req.top_n)
-
-    final_recommendations = [
-        RecoItem(book=book, score=scores[book], reason=f"{sim_metric} (NDCG:{ndcg:.4f})")
-        for book, _ in recommendations_list[:req.top_n]
-    ]
-
-    return RecoResponse(user_id=req.user_id, recommendations=final_recommendations)
+    return RecoResponse(user_id=req.user_id,
+                        recommendations=[RecoItem(book=b, score=s, reason=sim_metric) for b, s in top])
