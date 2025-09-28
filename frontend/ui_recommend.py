@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import os
+
 import pandas as pd
 import requests
 import streamlit as st
+from dotenv import load_dotenv
 from pandas import DataFrame
 
-BACKEND = "https://recommendation-system-ods.onrender.com"
+load_dotenv()
 
 
 def render_recommendation_card(row: pd.Series) -> None:
@@ -40,7 +43,7 @@ def get_recommendations(user_id: str, top_n: int, metric: str) -> DataFrame | No
         payload = {"user_id": str(user_id), "top_n": int(top_n), "like_threshold": 7}
 
         r: requests.Response = requests.post(
-            f"{BACKEND}/v1/recomendar",
+            f"{os.environ.get("BACKEND_URL")}/v1/recomendar",
             params={"sim_metric": metric},
             json=payload,
             timeout=30,

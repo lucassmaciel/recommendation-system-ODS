@@ -1,15 +1,17 @@
 from __future__ import annotations
 
+import os
+
 import pandas as pd
 import requests
 import streamlit as st
+from dotenv import load_dotenv
 from pandas import DataFrame
 from streamlit_star_rating import st_star_rating
 from utils import paginate
 
+load_dotenv()
 _USE_STAR_RATING = True
-
-BACKEND_URL = "https://recommendation-system-ods.onrender.com"
 
 # -------- modal de avaliação --------
 @st.dialog("Avaliar livro")
@@ -38,7 +40,7 @@ def show_rating_dialog(book_title: str):
         payload = {"user_id": str(user_id), "book": str(book_title), "rating": int(rating)}
         try:
             with st.spinner("Salvando..."):
-                response = requests.post(f"{BACKEND_URL}/v1/rating", json=payload, timeout=10)
+                response = requests.post(f"{os.environ.get("BACKEND_URL")}/v1/rating", json=payload, timeout=10)
                 response.raise_for_status()
             st.success("Avaliação salva com sucesso!")
             st.cache_data.clear() # Limpa o cache para recarregar as recomendações
