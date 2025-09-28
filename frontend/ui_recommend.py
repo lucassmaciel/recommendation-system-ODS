@@ -46,7 +46,7 @@ def get_recommendations(user_id: str, top_n: int, metric: str) -> DataFrame | No
             f"{os.environ.get("BACKEND_URL")}/v1/recomendar",
             params={"sim_metric": metric},
             json=payload,
-            timeout=30,
+            timeout=60,
         )
         r.raise_for_status()
 

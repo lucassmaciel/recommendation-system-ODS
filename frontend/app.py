@@ -75,7 +75,7 @@ def sidebar(users_map: DataFrame) -> None:
                 try:
                     # envia o 'username' para o backend
                     payload: dict[str, str] = {"username": username}
-                    r: requests.Response = requests.post(f"{os.environ.get("BACKEND_URL")}/v1/users/signup", json=payload, timeout=20)
+                    r: requests.Response = requests.post(f"{os.environ.get("BACKEND_URL")}/v1/users/signup", json=payload, timeout=60)
                     r.raise_for_status()
                     response_data = r.json()
 

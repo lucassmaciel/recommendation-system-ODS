@@ -40,7 +40,7 @@ def show_rating_dialog(book_title: str):
         payload = {"user_id": str(user_id), "book": str(book_title), "rating": int(rating)}
         try:
             with st.spinner("Salvando..."):
-                response = requests.post(f"{os.environ.get("BACKEND_URL")}/v1/rating", json=payload, timeout=10)
+                response = requests.post(f"{os.environ.get("BACKEND_URL")}/v1/rating", json=payload, timeout=60)
                 response.raise_for_status()
             st.success("Avaliação salva com sucesso!")
             st.cache_data.clear() # Limpa o cache para recarregar as recomendações
