@@ -6,8 +6,8 @@ import pandas as pd
 import streamlit as st
 from pandas import DataFrame
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "processed-data"
+ROOT: Path = Path(__file__).resolve().parents[1]
+DATA_DIR: Path = ROOT / "processed-data"
 
 def _require(p: Path):
     if not p.exists():
@@ -16,10 +16,10 @@ def _require(p: Path):
 
 @st.cache_data
 def load_data() -> tuple[DataFrame, DataFrame]:
-    user_path = DATA_DIR / "final_user_df.csv"
-    books_path = DATA_DIR / "books_info.csv"
+    user_path: Path = DATA_DIR / "final_user_df.csv"
+    books_path: Path = DATA_DIR / "books_info.csv"
     _require(user_path)
     _require(books_path)
-    user_df = pd.read_csv(user_path)
-    books_df = pd.read_csv(books_path)
+    user_df: DataFrame = pd.read_csv(user_path)
+    books_df: DataFrame = pd.read_csv(books_path)
     return user_df, books_df

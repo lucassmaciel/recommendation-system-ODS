@@ -1,6 +1,8 @@
-from pathlib import Path
 from functools import lru_cache
+from pathlib import Path
+
 import pandas as pd
+
 from backend.core.config import settings
 
 REQUIRED = {"User-ID", "Book-Title", "Rating"}

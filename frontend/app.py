@@ -22,7 +22,7 @@ st.set_page_config(page_title="Sistema de Recomendação", layout="wide", page_i
 st.html("<style>img { height: 300px !important; object-fit: cover !important; }</style>") # limita o tamanho da imagem dos livros
 
 # --- SIDEBAR E AUTENTICAÇÃO ---
-def sidebar(users_map: DataFrame):
+def sidebar(users_map: DataFrame) -> None:
     """Renderiza a barra lateral para login e cadastro."""
     with st.sidebar:
         st.header("👤 Conta")

@@ -72,7 +72,7 @@ def render_book_card(row: pd.Series) -> None:
             if pd.notna(bid):
                 try:
                     bid_str = str(int(bid))
-                except Exception:
+                except Exception:  # noqa: BLE001
                     bid_str = str(bid)
                 st.caption(f"ID: {bid_str}")
         with col3:
