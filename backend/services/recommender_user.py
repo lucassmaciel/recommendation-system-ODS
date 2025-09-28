@@ -52,6 +52,7 @@ def recommend_user_based_better(req, df=None,
     if df is None:
         df = pd.read_csv(req.data_path, dtype={"user_id": str}).set_index("user_id")
     df = df.apply(pd.to_numeric, errors="coerce").fillna(0.0)
+    df = df.apply(lambda row: (row - row[row > 0].mean()) / (row[row > 0].std() or 1), axis=1)
 
     uid = str(req.user_id)
     _log("[rec] uid:", uid, "idx dtype:", df.index.dtype, "shape:", df.shape)
