@@ -6,7 +6,7 @@ Professor: Fábio
 ## Equipe
 - Caio Jorge da Cunha Queiroz — 2315310028
 - Lucas Maciel Gomes — 2315310014
-- Izabella de Lima Catrinck — 3425310033
+- Izabella de Lima Catrinck — 2315310033
 
 ## Visão Geral
 
@@ -32,8 +32,8 @@ frontend/
 Contém a interface desenvolvida em Streamlit.
 Permite a entrada de avaliações, execução do algoritmo e exibição das recomendações de livros ao usuário.
 
-data/  
-Diretório destinado ao armazenamento dos datasets.
+processed-data/  
+Diretório destinado ao armazenamento dos datasets tratados.
 Inclui:
 - O catálogo de livros (ID, título, categoria).
 - As avaliações dos usuários (usuário, livro, nota).
@@ -68,7 +68,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 
 Após instalar o UV, execute o comando abaixo na raiz do projeto:
 ```
-uv sync
+uv sync -- frozen
 ``` 
 
 Este comando irá:
