@@ -20,4 +20,5 @@ dependencies = [
     "requests>=2.32",
     "filelock>=3.16",
     "names>=0.3.0",
+    "gunicorn>=23.0.0",
 ]
