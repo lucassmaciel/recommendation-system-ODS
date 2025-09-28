@@ -30,11 +30,7 @@ def sidebar(users_map: DataFrame) -> None:
         # sistema de mensagens flash para feedbacks
         flash = st.session_state.pop("flash", None)
         if flash:
-            kind = flash.get("type", "info")
-            msg = flash.get("msg", "")
-
-            if kind == "success":
-                st.success(msg)
+            st.success(flash["msg"]) if flash["type"] == "success" else st.warning(flash["msg"])
 
         # exibe o nome do usuário logado, não o ID
         current_user_id = st.session_state.get("current_user")
@@ -55,18 +51,16 @@ def sidebar(users_map: DataFrame) -> None:
 
         selected_username = st.selectbox("Selecionar usuário", options=usernames, index=default_idx)
 
-        if st.button("Entrar", width="stretch"):
+        if st.button("Entrar", use_container_width=True):
             # mapeia o username selecionado de volta para o seu user_id
             user_id_to_login = users_map.loc[users_map["username"] == selected_username, "user_id"].iloc[0]
-
             st.session_state.current_user = str(user_id_to_login)
             st.toast(f"Logado como {selected_username}")
             st.rerun()
-
         st.divider()
 
         # --- CADASTRO ---
-        new_username: str = st.text_input("Cadastrar novo usuário", placeholder="ex.: Memphis Depay")
+        new_username: str = st.text_input("Cadastrar novo usuário", placeholder="ex.: Joao Silva")
         if st.button("Cadastrar", use_container_width=True):
             username: str = new_username.strip()
             if not username:
