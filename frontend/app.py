@@ -11,7 +11,7 @@ from ui_recommend import render as recommend
 st.set_page_config(page_title="Sistema de Recomendação", layout="wide")
 
 # Endpoint do backend
-BACKEND = "http://localhost:8000"
+BACKEND = "https://recommendation-system-ods.onrender.com"
 
 # CSS global
 st.html("""
