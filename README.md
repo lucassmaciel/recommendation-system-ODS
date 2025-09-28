@@ -6,7 +6,7 @@ Professor: Fábio
 ## Equipe
 - Caio Jorge da Cunha Queiroz — 2315310028
 - Lucas Maciel Gomes — 2315310014
-- Izabella de Lima Catrinck —
+- Izabella de Lima Catrinck — 3425310033
 
 ## Visão Geral
 
@@ -41,6 +41,8 @@ Inclui:
 metrics/  
 Pasta com scripts voltados ao cálculo da acurácia do sistema.
 Aqui será feita a divisão dos dados em treino e teste, geração de recomendações e comparação com o “gabarito”.
+Calcula-se a métrica de precisão por usuário, testando as abordagens: Coseno e Pearson.
+Para rodar basta executar o comando: python -m metrics.test_user 
 
 README.md  
 Documento de apresentação do projeto, contendo descrição, explicação da organização e instruções de execução.
