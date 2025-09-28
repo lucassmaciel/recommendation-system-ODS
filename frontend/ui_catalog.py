@@ -9,7 +9,7 @@ from utils import paginate
 
 _USE_STAR_RATING = True
 
-BACKEND_URL = "http://localhost:8000"
+BACKEND_URL = "https://recommendation-system-ods.onrender.com"
 
 # -------- modal de avaliação --------
 @st.dialog("Avaliar livro")

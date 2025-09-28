@@ -5,7 +5,7 @@ import requests
 import streamlit as st
 from pandas import DataFrame
 
-BACKEND = "http://localhost:8000"
+BACKEND = "https://recommendation-system-ods.onrender.com"
 
 
 def render_recommendation_card(row: pd.Series) -> None:
