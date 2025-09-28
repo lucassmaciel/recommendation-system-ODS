@@ -26,4 +26,4 @@ class RatingIn(BaseModel):
     rating: int = Field(..., ge=1, le=10)
 
 class UserSignup(BaseModel):
-    user_id: str = Field(..., min_length=1, description="Identificador do usuário (string)")
+    username: str = Field(..., min_length=1, description="Identificador do usuário (string)")
