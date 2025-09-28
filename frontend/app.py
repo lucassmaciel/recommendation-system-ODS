@@ -1,101 +1,100 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING
 
 import requests
 import state
 import streamlit as st
 from data import load_data
 from dotenv import load_dotenv
-from pandas.core.frame import DataFrame
 from ui_catalog import render as catalog
 from ui_my_ratings import render as myratings
 from ui_recommend import render as recommend
 
-if TYPE_CHECKING:
-    from pandas import DataFrame
+st.set_page_config(page_title="Sistema de Recomendação", layout="wide")
 
+# Endpoint do backend
 load_dotenv()
 
-st.set_page_config(page_title="Sistema de Recomendação", layout="wide", page_icon="📚")
-st.html("<style>img { height: 300px !important; object-fit: cover !important; }</style>") # limita o tamanho da imagem dos livros
+# CSS global
+st.html("""
+<style>
+  img { height: 300px !important; object-fit: cover !important; }
+</style>
+""")
 
-# --- SIDEBAR E AUTENTICAÇÃO ---
-def sidebar(users_map: DataFrame) -> None:
-    """Renderiza a barra lateral para login e cadastro."""
+
+def sidebar(user_ids):
     with st.sidebar:
-        st.header("👤 Conta")
+        st.header("Conta")
 
-        # sistema de mensagens flash para feedbacks
         flash = st.session_state.pop("flash", None)
         if flash:
-            st.success(flash["msg"]) if flash["type"] == "success" else st.warning(flash["msg"])
+            kind, msg = flash.get("type"), flash.get("msg", "")
+            if kind == "success":
+                st.success(msg)
+            elif kind == "warning":
+                st.warning(msg)
+            elif kind == "error":
+                st.error(msg)
+            else:
+                st.info(msg)
 
-        # exibe o nome do usuário logado, não o ID
-        current_user_id = st.session_state.get("current_user")
-        if current_user_id and not users_map.empty:
-            current_username = users_map.loc[users_map["user_id"] == int(current_user_id), "username"].iloc[0]
-            st.caption(f"Logado como: **{current_username}**")
-        else:
-            st.caption("Logado como: **—**")
+        current = st.session_state.get("current_user")
+        st.caption(f"Logado como: **{current or '—'}**")
+
         st.divider()
 
-        # --- LOGIN ---
-        usernames = users_map["username"].tolist()
-        try:
-            # encontra o índice do username atual para ser o padrão do selectbox
-            default_idx: int = usernames.index(current_username) if current_user_id else 0
-        except (ValueError, NameError):
-            default_idx = 0
-
-        selected_username = st.selectbox("Selecionar usuário", options=usernames, index=default_idx)
-
+        options = [str(x) for x in user_ids]
+        default_idx = options.index(str(current)) if current and str(current) in options else 0 if options else 0
+        uid = st.selectbox("Selecionar usuário existente", options=options, index=default_idx if options else 0)
         if st.button("Entrar", use_container_width=True):
-            # mapeia o username selecionado de volta para o seu user_id
-            user_id_to_login = users_map.loc[users_map["username"] == selected_username, "user_id"].iloc[0]
-            st.session_state.current_user = str(user_id_to_login)
-            st.toast(f"Logado como {selected_username}")
-            st.rerun()
+            st.session_state.current_user = str(uid)
+            st.toast(f"Logado como {uid}")
+
         st.divider()
 
-        # --- CADASTRO ---
-        new_username: str = st.text_input("Cadastrar novo usuário", placeholder="ex.: Joao Silva")
+        new_id = st.text_input("Cadastrar novo ID", value="", placeholder="ex.: 9999")
         if st.button("Cadastrar", use_container_width=True):
-            username: str = new_username.strip()
-            if not username:
-                st.warning("Informe um nome de usuário.")
+            new_uid = new_id.strip()
+            if not new_id.strip():
+                st.warning("Informe um ID.")
             else:
                 try:
-                    # envia o 'username' para o backend
-                    payload: dict[str, str] = {"username": username}
-                    r: requests.Response = requests.post(f"{os.environ.get("BACKEND_URL")}/v1/users/signup", json=payload, timeout=60)
+                    r = requests.post(f"{os.environ.get("BACKEND_URL")}/v1/users/signup",
+                                      json={"user_id": new_uid},
+                                      timeout=20)
                     r.raise_for_status()
-                    response_data = r.json()
-
-                    if not response_data.get("created", True):
-                        st.warning(f"O nome de usuário **{username}** já existe.")
+                    payload = r.json() if r.headers.get("content-type", "").startswith("application/json") else {}
+                    if not payload.get("created", True):
+                        st.warning(f"O ID **{new_uid}** já existe. Escolha outro.")
                     else:
-                        # pega o novo user_id retornado pelo backend
-                        new_user_id = response_data.get("user_id")
-                        st.session_state["current_user"] = new_user_id
-                        st.session_state["flash"] = {"type": "success", "msg": f"Usuário **{username}** cadastrado!"}
-                        load_data.clear() # limpa o cache para recarregar a lista de usuários
+                        try:
+                            load_data.clear()
+                        except Exception:
+                            st.cache_data.clear()
+                        st.session_state["flash"] = {"type": "success", "msg": f"Usuário **{new_uid}** cadastrado com sucesso."}
+                        st.session_state["current_user"] = new_uid
                         st.rerun()
                 except requests.RequestException as e:
                     st.error(f"Falha ao cadastrar: {e}")
 
 
 def main():
-    """Orquestra a execução do aplicativo."""
     state.init()
     user_df, books_df = load_data()
 
-    # cria um DataFrame de mapeamento: user_id <-> username
-    # isso simplifica as buscas na interface
-    users_map: DataFrame = user_df[["user_id", "username"]].drop_duplicates().sort_values("username")
+    # Para que apareça sempre em ordem crescente
+    user_ids = (
+        user_df["user_id"]
+        .dropna()
+        .astype(int)
+        .sort_values()
+        .astype(str)
+        .unique()
+    )
 
-    sidebar(users_map)
+    sidebar(user_ids)
 
     st.markdown("# :rainbow[Sistema de recomendação de livros]")
     st.caption("Esse sistema utiliza filtragem colaborativa e correlação híbrida para calcular a distância entre os itens.")
