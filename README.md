@@ -44,6 +44,27 @@ Aqui será feita a divisão dos dados em treino e teste, geração de recomenda�
 Calcula-se a métrica de precisão por usuário, testando as abordagens: Coseno e Pearson.
 Para rodar basta executar o comando: python -m metrics.test_user 
 
+Para teste de Acurácia trazemos aqui 2 exemplos de usuários, com 20 recomendações:
+
+Para o usuário 11676, temos:
+Coseno
+# Acertos: 14 de 20
+# Acurácia: 70.00%
+
+Pearson
+# Acertos: 10 de 20
+# Acurácia: 50.00%
+
+Para o usuário 104636, temos:
+
+Coseno
+# Acertos: 7 de 20
+# Acurácia: 35.00%
+
+Pearson
+# Acertos: 8 de 20
+# Acurácia: 40.00%
+
 README.md  
 Documento de apresentação do projeto, contendo descrição, explicação da organização e instruções de execução.
 
