@@ -105,7 +105,7 @@ def main():
         "✨ Recomendações",
         "📚 Catálogo",
         "⭐ Minhas avaliações",
-        "🤖 Agente"
+        "👾 Agente"
     ])
     with tab_rec:
         recommend(user_df, books_df)
