@@ -62,9 +62,10 @@ def sidebar(user_ids) -> None:  # noqa: C901, PLR0912
                 st.warning("Informe um ID.")
             else:
                 try:
-                    r = requests.post(f"{os.environ.get("BACKEND_URL")}/v1/users/signup",
+                    backend_url = os.getenv("BACKEND_URL") or st.secrets.get("backend", {}).get("url")
+                    r = requests.post(f"{backend_url}/v1/users/signup",
                                       json={"user_id": new_uid},
-                                      timeout=20)
+                                      timeout=60)
                     r.raise_for_status()
                     payload = r.json() if r.headers.get("content-type", "").startswith("application/json") else {}
                     if not payload.get("created", True):

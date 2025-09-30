@@ -40,10 +40,11 @@ def render_recommendation_card(row: pd.Series) -> None:
 def get_recommendations(user_id: str, top_n: int, metric: str) -> DataFrame | None:
     """Busca recomendações no backend."""
     try:
+        backend_url = os.getenv("BACKEND_URL") or st.secrets.get("backend", {}).get("url")
         payload = {"user_id": str(user_id), "top_n": int(top_n), "like_threshold": 7}
 
         r: requests.Response = requests.post(
-            f"{os.environ.get("BACKEND_URL")}/v1/recomendar",
+            f"{backend_url}/v1/recomendar",
             params={"sim_metric": metric},
             json=payload,
             timeout=60,
