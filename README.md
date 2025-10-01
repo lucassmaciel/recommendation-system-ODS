@@ -65,7 +65,7 @@ Pearson
 ### Acertos: 8 de 20
 ### Acurácia: 40.00%
 
-### Instalação e Configuração
+## Instalação e Configuração
 
 Este projeto utiliza o "uv" para gerenciamento de dependências. É necessário instalá-lo no seu computador:
 
