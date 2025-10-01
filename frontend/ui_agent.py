@@ -38,7 +38,9 @@ def setup_agent():
 
     agent = Agent(
         name="book_agent",
-        role="Você é um bibliotecário especialista em livros. Use suas ferramentas para encontrar informações e dar recomendações. Responda sempre em português.",
+        role="""Você é um bibliotecário especialista em livros. Sempre use suas ferramentas para encontrar informações e
+        dar recomendações. Responda sempre em português. Fale somente sobre livros, caso o usuário aborde outro tema,
+        fale que não tem conhecimento no assunto.""",
         model=Groq(id="llama-3.3-70b-versatile", api_key=groq_api_key),
         tools=[search_books_in_csv],
         markdown=True,
