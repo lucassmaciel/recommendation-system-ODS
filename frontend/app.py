@@ -101,11 +101,11 @@ def main():
     st.markdown("# :rainbow[Sistema de recomendação de livros]")
     st.caption("Esse sistema utiliza filtragem colaborativa e correlação híbrida para calcular a distância entre os itens.")
 
-    tab_rec, tab_cat, tab_my, tab_agent = st.tabs([
-        "✨ Recomendações",
+    tab_cat, tab_my, tab_agent, tab_rec = st.tabs([
         "📚 Catálogo",
         "⭐ Minhas avaliações",
-        "👾 Agente"
+        "👾 Agente",
+        "✨ Recomendações"
     ])
     with tab_rec:
         recommend(user_df, books_df)
