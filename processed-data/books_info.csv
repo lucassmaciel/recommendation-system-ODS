@@ -1,6 +1,6 @@
 ,user_id,book,rating,author,year,publisher,image,book_id
 0,2033,Couplehood,8,PAUL REISER,1995,Bantam,http://images.amazon.com/images/P/0553573136.01.LZZZZZZZ.jpg,0
-1,2033,Ender's Game (Ender Wiggins Saga (Paperback)),10,Orson Scott Card,1986,Tor Books,http://images.amazon.com/images/P/0812533550.01.LZZZZZZZ.jpg,1
+1,2033,Ender's Game (Ender Wiggins Saga (Paperback)),10,Orson Scott Card,1986,Tor Books,http://images.amazon.com/images/P/0812550706.01.LZZZZZZZ.jpg,1
 2,2033,Harry Potter and the Chamber of Secrets (Book 2),9,J. K. Rowling,1999,Scholastic,http://images.amazon.com/images/P/0439064864.01.LZZZZZZZ.jpg,2
 3,2033,Harry Potter and the Goblet of Fire (Book 4),9,J. K. Rowling,2000,Scholastic,http://images.amazon.com/images/P/0439139597.01.LZZZZZZZ.jpg,3
 4,2033,Harry Potter and the Order of the Phoenix (Book 5),9,J. K. Rowling,2003,Scholastic,http://images.amazon.com/images/P/043935806X.01.LZZZZZZZ.jpg,4
@@ -3934,7 +3934,7 @@
 3932,94853,The Firm,8,John Grisham,1992,Bantam Dell Publishing Group,http://images.amazon.com/images/P/044021145X.01.LZZZZZZZ.jpg,225
 3933,94853,Wild Animus,6,Rich Shapero,2004,Too Far,http://images.amazon.com/images/P/0971880107.01.LZZZZZZZ.jpg,530
 3934,94951,American Gods,10,Neil Gaiman,2002,HarperTorch,http://images.amazon.com/images/P/0380789035.01.LZZZZZZZ.jpg,57
-3935,94951,Ender's Game (Ender Wiggins Saga (Paperback)),10,Orson Scott Card,1986,Tor Books,http://images.amazon.com/images/P/0812533550.01.LZZZZZZZ.jpg,1
+3935,94951,Ender's Game (Ender Wiggins Saga (Paperback)),10,Orson Scott Card,1986,Tor Books,http://images.amazon.com/images/P/0812550706.01.LZZZZZZZ.jpg,1
 3936,94951,Neuromancer (Remembering Tomorrow),9,William Gibson,1995,Ace Books,http://images.amazon.com/images/P/0441569595.01.LZZZZZZZ.jpg,380
 3937,94951,Neverwhere,9,Neil Gaiman,1998,Avon,http://images.amazon.com/images/P/0380789019.01.LZZZZZZZ.jpg,381
 3938,94951,The Handmaid's Tale,8,Margaret Atwood,1989,Fawcett Books,http://images.amazon.com/images/P/0449212602.01.LZZZZZZZ.jpg,235
@@ -5219,7 +5219,7 @@
 5217,120565,The Bluest Eye,10,Toni Morrison,2000,Plume Books,http://images.amazon.com/images/P/0452282195.01.LZZZZZZZ.jpg,48
 5218,120565,The Simple Truth,7,David Baldacci,1998,Warner Books Inc,http://images.amazon.com/images/P/0446523321.01.LZZZZZZZ.jpg,493
 5219,120565,The Testament,9,John Grisham,1999,Trafalgar Square,http://images.amazon.com/images/P/0099245027.01.LZZZZZZZ.jpg,206
-5220,122429,84 Charing Cross Road,9,Helene Hanff,0,Warner Books> C/o Little Br,http://images.amazon.com/images/P/0860074382.01.LZZZZZZZ.jpg,245
+5220,122429,84 Charing Cross Road,9,Helene Hanff,1990,Warner Books> C/o Little Br,http://images.amazon.com/images/P/0140143505.01.LZZZZZZZ.jpg,245
 5221,122429,A Beautiful Mind: The Life of Mathematical Genius and Nobel Laureate John Nash,9,Sylvia Nasar,2001,Simon &amp; Schuster,http://images.amazon.com/images/P/0743224574.01.LZZZZZZZ.jpg,623
 5222,122429,A Fine Balance,9,Rohinton Mistry,2001,Vintage Books USA,http://images.amazon.com/images/P/140003065X.01.LZZZZZZZ.jpg,215
 5223,122429,A Painted House,3,John Grisham,2001,Dell Publishing Company,http://images.amazon.com/images/P/044023722X.01.LZZZZZZZ.jpg,252
@@ -6177,7 +6177,7 @@
 6175,148744,The Search,8,Iris Johansen,2000,Bantam Books,http://images.amazon.com/images/P/0553800914.01.LZZZZZZZ.jpg,490
 6176,148744,Vinegar Hill (Oprah's Book Club (Paperback)),8,A. Manette Ansay,1998,Perennial,http://images.amazon.com/images/P/0380730138.01.LZZZZZZZ.jpg,54
 6177,149907,I Capture the Castle,9,Dodie Smith,1999,St. Martin's Griffin,http://images.amazon.com/images/P/0312201656.01.LZZZZZZZ.jpg,188
-6178,149908,84 Charing Cross Road,8,Helene Hanff,0,Warner Books> C/o Little Br,http://images.amazon.com/images/P/0860074382.01.LZZZZZZZ.jpg,245
+6178,149908,84 Charing Cross Road,8,Helene Hanff,1990,Warner Books> C/o Little Br,http://images.amazon.com/images/P/0140143505.01.LZZZZZZZ.jpg,245
 6179,149908,About a Boy,8,Nick Hornby,2002,Penguin Books Ltd,http://images.amazon.com/images/P/0141007338.01.LZZZZZZZ.jpg,71
 6180,149908,Angelas Ashes,8,Frank Mccourt,0,Harpercollins Uk,http://images.amazon.com/images/P/000649840X.01.LZZZZZZZ.jpg,261
 6181,149908,Big Trouble,8,Dave Barry,1999,Putnam Publishing Group,http://images.amazon.com/images/P/0399145672.01.LZZZZZZZ.jpg,272
@@ -7868,7 +7868,7 @@
 7866,199416,The Reader,8,Bernhard Schlink,1997,Random House,http://images.amazon.com/images/P/0679442790.01.LZZZZZZZ.jpg,52
 7867,199416,The Simple Truth,5,David Baldacci,1998,Warner Books Inc,http://images.amazon.com/images/P/0446523321.01.LZZZZZZZ.jpg,493
 7868,199416,Violets Are Blue,5,James Patterson,2001,"Little, Brown",http://images.amazon.com/images/P/0316693235.01.LZZZZZZZ.jpg,521
-7869,200226,84 Charing Cross Road,8,Helene Hanff,0,Warner Books> C/o Little Br,http://images.amazon.com/images/P/0860074382.01.LZZZZZZZ.jpg,245
+7869,200226,84 Charing Cross Road,8,Helene Hanff,1990,Warner Books> C/o Little Br,http://images.amazon.com/images/P/0140143505.01.LZZZZZZZ.jpg,245
 7870,200226,Angela's Ashes (MMP) : A Memoir,8,Frank McCourt,1999,Scribner,http://images.amazon.com/images/P/0684872153.01.LZZZZZZZ.jpg,176
 7871,200226,At Home in Mitford (The Mitford Years),7,Jan Karon,1996,Viking Books,http://images.amazon.com/images/P/014025448X.01.LZZZZZZZ.jpg,120
 7872,200226,Beach Music,5,Pat Conroy,1996,Bantam Books,http://images.amazon.com/images/P/0553574574.01.LZZZZZZZ.jpg,269
@@ -8691,7 +8691,7 @@
 8689,225199,SHIPPING NEWS,8,Annie Proulx,1994,Scribner,http://images.amazon.com/images/P/0671510053.01.LZZZZZZZ.jpg,41
 8690,225199,The Alchemist: A Fable About Following Your Dream,5,Paulo Coelho,1995,HarperSanFrancisco,http://images.amazon.com/images/P/0062502182.01.LZZZZZZZ.jpg,427
 8691,225199,When the Wind Blows,6,John Saul,1990,Dell,http://images.amazon.com/images/P/0440194903.01.LZZZZZZZ.jpg,526
-8692,225232,84 Charing Cross Road,8,Helene Hanff,0,Warner Books> C/o Little Br,http://images.amazon.com/images/P/0860074382.01.LZZZZZZZ.jpg,245
+8692,225232,84 Charing Cross Road,8,Helene Hanff,1990,Warner Books> C/o Little Br,http://images.amazon.com/images/P/0140143505.01.LZZZZZZZ.jpg,245
 8693,225232,A Case of Need,7,Michael Crichton,1994,Signet Book,http://images.amazon.com/images/P/0451183665.01.LZZZZZZZ.jpg,246
 8694,225232,Bridget Jones : The Edge of Reason,7,Helen Fielding,2000,Viking Books,http://images.amazon.com/images/P/0670892963.01.LZZZZZZZ.jpg,30
 8695,225232,Moonlight Becomes You,7,Mary Higgins Clark,1997,Pocket,http://images.amazon.com/images/P/0671867113.01.LZZZZZZZ.jpg,619
@@ -10669,7 +10669,7 @@
 10667,274301,Unnatural Exposure,6,Patricia Daniels Cornwell,1998,Berkley Publishing Group,http://images.amazon.com/images/P/0425163407.01.LZZZZZZZ.jpg,519
 10668,274301,Winter Solstice,10,Rosamunde Pilcher,2000,St. Martin's Press,http://images.amazon.com/images/P/B00009NDAN.01.LZZZZZZZ.jpg,230
 10669,274301,"\O\"" Is for Outlaw""",8,SUE GRAFTON,2001,Ballantine Books,http://images.amazon.com/images/P/0449003787.01.LZZZZZZZ.jpg,207
-10670,275970,84 Charing Cross Road,10,Helene Hanff,0,Warner Books> C/o Little Br,http://images.amazon.com/images/P/0860074382.01.LZZZZZZZ.jpg,245
+10670,275970,84 Charing Cross Road,10,Helene Hanff,1990,Warner Books> C/o Little Br,http://images.amazon.com/images/P/0140143505.01.LZZZZZZZ.jpg,245
 10671,275970,Atonement : A Novel,9,IAN MCEWAN,2003,Anchor,http://images.amazon.com/images/P/038572179X.01.LZZZZZZZ.jpg,649
 10672,275970,Balzac and the Little Chinese Seamstress : A Novel,10,DAI SIJIE,2002,Anchor,http://images.amazon.com/images/P/0385722206.01.LZZZZZZZ.jpg,121
 10673,275970,Charlotte's Web (Trophy Newbery),10,E. B. White,1974,HarperTrophy,http://images.amazon.com/images/P/0064400557.01.LZZZZZZZ.jpg,286
