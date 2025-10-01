@@ -65,10 +65,6 @@ Pearson
 ### Acertos: 8 de 20
 ### Acurácia: 40.00%
 
-README.md  
-Documento de apresentação do projeto, contendo descrição, explicação da organização e instruções de execução.
-
-
 ### Instalação e Configuração
 
 Este projeto utiliza o "uv" para gerenciamento de dependências. É necessário instalá-lo no seu computador:
