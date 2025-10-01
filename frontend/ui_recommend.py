@@ -78,7 +78,7 @@ def render(user_df: DataFrame, books_df: DataFrame) -> None:
         top_n: int = st.slider("Número de recomendações", 1, 20, 8)
     with col2:
         metric: str = st.selectbox(
-            "Métrica de similaridade", options=["hybrid", "cosine", "pearson"], index=0
+            "Métrica de similaridade", options=["cosine"], index=0
         )
     if st.button("🔍 Ver recomendações", width="stretch"):
         with st.spinner("Buscando recomendações..."):

@@ -48,22 +48,22 @@ Para teste de Acurácia trazemos aqui 2 exemplos de usuários, com 20 recomenda�
 
 Para o usuário 11676, temos:
 Coseno
-# Acertos: 14 de 20
-# Acurácia: 70.00%
+## Acertos: 14 de 20
+## Acurácia: 70.00%
 
 Pearson
-# Acertos: 10 de 20
-# Acurácia: 50.00%
+## Acertos: 10 de 20
+## Acurácia: 50.00%
 
 Para o usuário 104636, temos:
 
 Coseno
-# Acertos: 7 de 20
-# Acurácia: 35.00%
+## Acertos: 7 de 20
+## Acurácia: 35.00%
 
 Pearson
-# Acertos: 8 de 20
-# Acurácia: 40.00%
+## Acertos: 8 de 20
+## Acurácia: 40.00%
 
 README.md  
 Documento de apresentação do projeto, contendo descrição, explicação da organização e instruções de execução.

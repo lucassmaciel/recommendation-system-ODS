@@ -74,14 +74,14 @@ def main():
         print(f"ERRO: Usuário com ID '{user_id}' não encontrado no DataFrame.")
         return
 
-    for metric in ["cosine", "pearson"]:
+    for metric in ["cosine", "pearson", "hybrid"]:
         evaluate_accuracy_single_user(
             df,
             recommender_user.recommend_user_based_better,
             user_id=user_id,
             sim_metric=metric,
             top_n=20,
-            like_threshold=7,
+            like_threshold=6,
             test_fraction=0.5,
         )
 
